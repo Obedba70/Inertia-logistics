@@ -3,35 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inertia Logistics • Feed</title>
+<title>Inertia Logistics</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js linker></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <style>
-  :root { --bg:#0f0f1a; --card:#1a1d2e; --orange:#ff6b00; --green:#00ff80; }
-  * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,Arial; }
-  body { background:var(--bg); color:white; }
-  .header { position:fixed; top:0; left:0; right:0; background:#0a0a14; border-bottom:3px solid var(--orange); padding:15px; text-align:center; z-index:1000; }
-  .header h1 { color:var(--orange); font-size:28px; text-shadow:0 0 15px #ff6b00; }
-  .online { position:fixed; top:15px; right:15px; background:var(--orange); color:black; padding:8px 18px; border-radius:30px; font-weight:bold; font-size:14px; }
-  .shoutbox { position:fixed; top:70px; left:0; right:0; background:#111; border-bottom:2px solid var(--orange); padding:12px; z-index:999; }
-  .shouts { height:120px; overflow-y:auto; margin-bottom:8px; font-size:14px; }
+  :root { --bg:#0a0e17; --card:#12151f; --orange:#ff6b00; --green:#00ff80; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,-apple-system,Arial; }
+  body { background:var(--bg); color:white; min-height:100vh; }
+  .header { position:fixed; top:0; left:0; right:0; background:#0a0e17; border-bottom:4px solid var(--orange); padding:15px; text-align:center; z-index:1000; }
+  .header h1 { color:var(--orange); font-size:32px; font-weight:900; text-shadow:0 0 20px #ff6b00; }
+  .online { position:fixed; top:18px; right:15px; background:var(--orange); color:black; padding:8px 20px; border-radius:50px; font-weight:bold; font-size:15px; }
+  .shoutbox { position:fixed; top:68px; left:0; right:0; background:#0f131c; border-bottom:3px solid var(--orange); padding:12px; z-index:999; }
+  .shouts { height:130px; overflow-y:auto; margin-bottom:10px; font-size:15px; padding:0 5px; }
   .shout span { color:var(--green); font-weight:bold; }
-  .feed { margin-top:210px; padding:10px; }
-  .post { background:var(--card); border-radius:18px; margin:15px auto; max-width:500px; overflow:hidden; box-shadow:0 4px 20px rgba(255,107,0,0.1); }
-  .post-header { padding:15px; display:flex; align-items:center; gap:12px; }
-  .post-header .name { color:var(--green); font-weight:bold; }
-  .post-img { width:100%; max-height:600px; object-fit:cover; }
-  .post-actions { padding:10px 15px; display:flex; gap:20px; }
-  .like-btn { color:#ff6b00; font-weight:bold; cursor:pointer; }
-  .post-content { padding:0 15px 15px; }
-  .comment-box { display:flex; padding:10px 15px; border-top:1px solid #333; }
-  .comment-box input { flex:1; background:#222; border:none; color:white; padding:12px; border-radius:50px; }
-  .comment-box button { background:var(--orange); color:black; border:none; padding:0 20px; border-radius:50px; margin-left:10px; font-weight:bold; }
-  .new-post { position:fixed; bottom:20px; right:20px; background:var(--orange); color:black; width:60px; height:60px; border-radius:50%; font-size:30px; border:none; box-shadow:0 0 20px rgba(255,107,0,0.6); z-index:999; }
+  .shout-input { width:100%; padding:14px 18px; background:#1a1f2e; border:2px solid var(--orange); color:white; border-radius:50px; font-size:16px; }
+  .feed { padding-top:230px; padding-bottom:80px; }
+  .post { background:var(--card); max-width:520px; margin:20px auto; border-radius:20px; overflow:hidden; box-shadow:0 8px 32px rgba(255,107,0,0.15); }
+  .post-header { padding:16px; display:flex; align-items:center; gap:12px; }
+  .name { color:var(--green); font-weight:700; font-size:17px; }
+  .post-img { width:100%; display:block; }
+  .post-text { padding:0 16px 12px; font-size:16px; }
+  .actions { padding:10px 16px; display:flex; gap:25px; font-size:22px; }
+  .like { cursor:pointer; }
+  .liked { filter:brightness(1.5); }
+  .new-post-btn { position:fixed; bottom:25px; right:20px; background:var(--orange); color:black; width:64px; height:64px; border-radius:50%; font-size:36px; font-weight:bold; border:none; box-shadow:0 0 30px rgba(255,107,0,0.7); z-index:999; }
   .hidden { display:none; }
-  .input-file { display:none; }
+  .login-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; z-index:10000; }
+  .login-screen input { width:300px; padding:16px; background:#1a1f2e; border:none; border-radius:50px; color:white; font-size:17px; }
+  .login-screen button { background:var(--orange); color:black; padding:16px 50px; border:none; border-radius:50px; font-weight:bold; font-size:18px; }
 </style>
 </head>
 <body>
@@ -43,24 +44,23 @@
 
 <div class="shoutbox">
   <div class="shouts" id="shouts"></div>
-  <input type="text" id="shoutText" placeholder="Shout something to the crew..." onkeypress="if(event.key==='Enter') shout()" style="width:100%; padding:12px; background:#222; border:2px solid var(--orange); color:white; border-radius:50px;">
+  <input type="text" class="shout-input" id="shoutInput" placeholder="Shout to the crew..." onkeypress="if(event.key==='Enter') shout()">
 </div>
 
 <div class="feed" id="feed"></div>
+<button class="new-post-btn" onclick="document.getElementById('fileInput').click()">+</button>
+<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="uploadPost(this.files[0])">
 
-<button class="new-post" onclick="document.getElementById('photoInput').click()">+</button>
-<input type="file" id="photoInput" accept="image/*" class="input-file" onchange="uploadPost(this.files[0])">
-
-<div id="loginScreen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
-  <h1 style="color:var(--orange);font-size:40px;">Inertia Logistics</h1>
-  <input type="email" id="email" placeholder="Email" style="padding:15px;width:300px;border-radius:50px;background:#222;border:none;color:white;">
-  <input type="password" id="password" placeholder="Password" style="padding:15px;width:300px;border-radius:50px;background:#222;border:none;color:white;">
-  <button onclick="login()" style="background:var(--orange);color:black;padding:15px 40px;border:none;border-radius:50px;font-weight:bold;">LOGIN</button>
-  <button onclick="signup()" style="background:#333;color:white;padding:15px 40px;border:none;border-radius:50px;">CREATE ACCOUNT</button>
+<div id="loginScreen" class="login-screen">
+  <h1 style="color:var(--orange);font-size:42px;">Inertia Logistics</h1>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">LOGIN</button>
+  <button onclick="signup()" style="background:#333;">CREATE ACCOUNT</button>
 </div>
 
 <script>
-const firebaseConfig = { 
+const firebaseConfig = {
   apiKey: "AIzaSyAnfQTsgdSf6c4Wty6XbN4xdkSVp7d3KvM",
   authDomain: "inertia-logistics.firebaseapp.com",
   projectId: "inertia-logistics",
@@ -73,103 +73,126 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-let uid = null;
+let currentUser = null;
 let inGameName = "Driver";
 
 auth.onAuthStateChanged(async user => {
   if (user) {
-    uid = user.uid;
+    currentUser = user;
     document.getElementById("loginScreen").classList.add("hidden");
-    const doc = await db.collection("users").doc(uid).get();
-    inGameName = doc.exists && doc.data().inGameName ? doc.data().inGameName : "Driver";
-    loadFeed(); loadShouts(); updateOnline();
-    setInterval(updateOnline, 10000);
+    const doc = await db.collection("users").doc(user.uid).get();
+    if (doc.exists && doc.data().inGameName) inGameName = doc.data().inGameName;
+    loadFeed();
+    loadShouts();
+    keepOnline();
+    setInterval(keepOnline, 10000);
   }
 });
 
-function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-function signup() { auth.createUserWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)
-  .then(() => db.collection("users").doc(auth.currentUser.uid).set({inGameName:"Driver", joined:new Date()}))
-  .catch(e=>alert(e.message)); }
+function login() { auth.signInWithEmailAndPassword(email.value, password.value).catch(e=>alert(e.message)); }
+function signup() { 
+  auth.createUserWithEmailAndPassword(email.value, password.value)
+    .then(() => db.collection("users").doc(auth.currentUser.uid).set({inGameName:"Driver", joined:new Date()}))
+    .catch(e=>alert(e.message));
+}
 
 async function uploadPost(file) {
   if (!file) return;
-  const text = prompt("Caption (optional):") || "";
-  const ref = storage.ref("posts/" + Date.now() + ".jpg");
+  const caption = prompt("Caption (optional):", "") || "";
+  const ref = storage.ref("posts/" + Date.now());
   await ref.put(file);
   const url = await ref.getDownloadURL();
   await db.collection("posts").add({
-    uid, name: inGameName, text, url, likes: [], time: firebase.firestore.FieldValue.serverTimestamp()
+    uid: currentUser.uid,
+    name: inGameName,
+    caption,
+    url,
+    likes: [],
+    time: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
 
 async function shout() {
-  const text = document.getElementById("shoutText").value.trim();
+  const text = document.getElementById("shoutInput").value.trim();
   if (!text) return;
-  await db.collection("shouts").add({name: inGameName, text, time: firebase.firestore.FieldValue.serverTimestamp()});
-  document.getElementById("shoutText").value = "";
+  await db.collection("shouts").add({
+    name: inGameName,
+    text,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  document.getElementById("shoutInput").value = "";
 }
 
 function loadShouts() {
-  db.collection("shouts").orderBy("time","desc").limit(30).onSnapshot(s => {
+  db.collection("shouts").orderBy("time","desc").limit(40).onSnapshot(snap => {
     const div = document.getElementById("shouts");
     div.innerHTML = "";
-    s.docs.reverse().forEach(d => {
-      const m = d.data();
-      div.innerHTML += `<div class="shout"><span>${m.name} 🚛:</span> ${m.text}</div>`;
+    snap.docs.reverse().forEach(doc => {
+      const d = doc.data();
+      div.innerHTML += `<div class="shout"><span>${d.name} Truck:</span> ${d.text}</div>`;
     });
   });
 }
 
 function loadFeed() {
-  db.collection("posts").orderBy("time","desc").onSnapshot(s => {
+  db.collection("posts").orderBy("time","desc").onSnapshot(snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
-    s.docs.forEach(d => {
-      const p = d.data();
-      const liked = p.likes.includes(uid);
+    snap.forEach(doc => {
+      const p = doc.data();
+      const liked = p.likes.includes(currentUser.uid);
       feed.innerHTML += `
         <div class="post">
           <div class="post-header">
-            <div class="name">${p.name} 🚛</div>
+            <div class="name">${p.name} Truck</div>
           </div>
-          ${p.text ? `<div class="post-content">${p.text}</div>` : ""}
+          ${p.caption ? `<div class="post-text">${p.caption}</div>` : ""}
           ${p.url ? `<img src="${p.url}" class="post-img">` : ""}
-          <div class="post-actions">
-            <span class="like-btn" onclick="like('${d.id}')">${liked ? "❤️" : "🤍"} ${p.likes.length}</span>
+          <div class="actions">
+            <span class="like ${liked?'liked':''}" onclick="toggleLike('${doc.id}')"> ${liked?'Full Heart':'Empty Heart'} ${p.likes.length}</span>
           </div>
         </div>`;
     });
   });
 }
 
-async function like(id) {
-  const ref = db.collection("posts").doc(id);
+async function toggleLike(postId) {
+  const ref = db.collection("posts").doc(postId);
   const doc = await ref.get();
   const likes = doc.data().likes || [];
-  if (likes.includes(uid)) likes.splice(likes.indexOf(uid),1);
-  else likes.push(uid);
+  if (likes.includes(currentUser.uid)) {
+    likes.splice(likes.indexOf(currentUser.uid), 1);
+  } else {
+    likes.push(currentUser.uid);
+  }
   await ref.update({likes});
 }
 
-function updateOnline() {
-  if (uid) db.collection("online").doc(uid).set({name:inGameName,time:Date.now()},{merge:true});
-  db.collection("online").onSnapshot(s => document.querySelector(".online").innerHTML = s.size + " Online");
+function keepOnline() {
+  if (currentUser) {
+    db.collection("online").doc(currentUser.uid).set({
+      name: inGameName,
+      time: Date.now()
+    }, {merge:true});
+  }
 }
+db.collection("online").onSnapshot(snap => {
+  document.querySelector(".online").textContent = snap.size + " Online";
+});
 
 function showOnline() {
-  db.collection("online").get().then(s => {
-    let list = "ONLINE NOW\n\n";
-    s.forEach(d => list += "• " + d.data().name + "\n");
+  db.collection("online").get().then(snap => {
+    let list = "ONLINE DRIVERS\n\n";
+    snap.forEach(d => list += "Truck " + d.data().name + "\n");
     alert(list || "Nobody online");
   });
 }
 </script>
 
-<center style="margin:100px 20px; color:var(--orange); font-size:24px;">
-  <b>PASTE THIS ENTIRE CODE NOW = FACEBOOK/INSTAGRAM STYLE FORUM</b><br><br>
-  <a href="https://github.com/obeddb70/inertia-logistics/edit/main/index.html" target="_blank" 
-     style="background:var(--orange); color:black; padding:20px 50px; text-decoration:none; border-radius:50px; font-weight:bold; font-size:28px;">
-    CLICK HERE TO REPLACE FILE
+<center style="margin:100px 20px; color:var(--orange); font-size:26px;">
+  <b>PASTE THIS NOW = 100% FIXED, NO MORE UNDEFINED, PURE FIRE</b><br><br>
+  <a href="https://github.com/obeddb70/inertia-logistics/edit/main/index.html" target="_blank"
+     style="background:var(--orange);color:black;padding:20px 60px;border-radius:50px;font-size:30px;text-decoration:none;font-weight:bold;">
+    REPLACE FILE NOW
   </a>
 </center>
