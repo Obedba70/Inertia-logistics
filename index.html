@@ -3,77 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inertia Logistics • Official Club Forum</title>
+<title>Inertia Logistics • Feed</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <style>
-  :root { --bg: #0a0e1a; --card: #11131a; --orange: #ff6b00; --green: #00ff80; }
-  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial; }
-  body { background:var(--bg); color:#ccc; }
-  .container { max-width:1100px; margin:0 auto; padding:15px; }
-  header { background:#0d1117; padding:20px; text-align:center; border-bottom:5px solid var(--orange); }
-  header h1 { color:var(--orange); font-size:42px; text-shadow:0 0 20px #ff6b00; letter-spacing:2px; }
-  .btn { background:var(--orange); color:black; padding:12px 30px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-size:16px; }
-  .btn:hover { background:#ff8533; }
-  .card { background:var(--card); border-radius:15px; padding:20px; margin:15px 0; border-left:4px solid var(--orange); }
-  .shoutbox .card { border-left:none; border:2px solid var(--orange); }
-  .shouts { height:400px; overflow-y:auto; background:#080a0f; padding:15px; border-radius:10px; }
-  .shout { margin:10px 0; }
+  :root { --bg:#0f0f1a; --card:#1a1d2e; --orange:#ff6b00; --green:#00ff80; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,Arial; }
+  body { background:var(--bg); color:white; }
+  .header { position:fixed; top:0; left:0; right:0; background:#0a0a14; border-bottom:3px solid var(--orange); padding:15px; text-align:center; z-index:1000; }
+  .header h1 { color:var(--orange); font-size:28px; text-shadow:0 0 15px #ff6b00; }
+  .online { position:fixed; top:15px; right:15px; background:var(--orange); color:black; padding:8px 18px; border-radius:30px; font-weight:bold; font-size:14px; }
+  .shoutbox { position:fixed; top:70px; left:0; right:0; background:#111; border-bottom:2px solid var(--orange); padding:12px; z-index:999; }
+  .shouts { height:120px; overflow-y:auto; margin-bottom:8px; font-size:14px; }
   .shout span { color:var(--green); font-weight:bold; }
-  .input { width:100%; padding:14px; background:#1a1f2e; border:2px solid #333; color:white; border-radius:10px; margin-top:10px; }
-  .topic-item { background:#161a26; padding:15px; margin:10px 0; border-radius:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-  .topic-item:hover { background:#1f2536; }
-  .ingame { color:var(--green); font-weight:bold; }
-  .online-btn { position:fixed; top:15px; right:15px; background:var(--orange); color:black; padding:10px 20px; border-radius:30px; font-weight:bold; z-index:999; cursor:pointer; }
+  .feed { margin-top:210px; padding:10px; }
+  .post { background:var(--card); border-radius:18px; margin:15px auto; max-width:500px; overflow:hidden; box-shadow:0 4px 20px rgba(255,107,0,0.1); }
+  .post-header { padding:15px; display:flex; align-items:center; gap:12px; }
+  .post-header .name { color:var(--green); font-weight:bold; }
+  .post-img { width:100%; max-height:600px; object-fit:cover; }
+  .post-actions { padding:10px 15px; display:flex; gap:20px; }
+  .like-btn { color:#ff6b00; font-weight:bold; cursor:pointer; }
+  .post-content { padding:0 15px 15px; }
+  .comment-box { display:flex; padding:10px 15px; border-top:1px solid #333; }
+  .comment-box input { flex:1; background:#222; border:none; color:white; padding:12px; border-radius:50px; }
+  .comment-box button { background:var(--orange); color:black; border:none; padding:0 20px; border-radius:50px; margin-left:10px; font-weight:bold; }
+  .new-post { position:fixed; bottom:20px; right:20px; background:var(--orange); color:black; width:60px; height:60px; border-radius:50%; font-size:30px; border:none; box-shadow:0 0 20px rgba(255,107,0,0.6); z-index:999; }
   .hidden { display:none; }
-  .photo { max-width:100%; border-radius:10px; margin:10px 0; }
+  .input-file { display:none; }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-<header>
+<div class="header">
   <h1>INERTIA LOGISTICS</h1>
-  <p style="color:#666; margin-top:5px;">Drive with the Force. Choose Inertia.</p>
-</header>
-
-<!-- LOGIN -->
-<div id="loginScreen">
-  <div style="text-align:center; padding:100px 20px;">
-    <h2 style="color:var(--orange); font-size:36px; margin-bottom:30px;">Official Club Forum</h2>
-    <input type="email" id="email" placeholder="Email" class="input" style="width:320px; display:inline-block;"><br><br>
-    <input type="password" id="password" placeholder="Password" class="input" style="width:320px; display:inline-block;"><br><br><br>
-    <button class="btn" onclick="login()">LOGIN</button>
-    <button class="btn" onclick="signup()">CREATE ACCOUNT</button>
-  </div>
+  <div class="online" onclick="showOnline()">0 Online</div>
 </div>
 
-<!-- MAIN APP -->
-<div id="app" class="hidden">
-  <div class="online-btn" onclick="showOnline()">0 Online</div>
-
-  <div class="card">
-    <h2 style="color:var(--orange); margin-bottom:15px;">Forum Topics</h2>
-    <button class="btn" onclick="newTopic()">+ New Topic</button>
-    <div id="topicsList" style="margin-top:20px;">Loading topics...</div>
-  </div>
-
-  <div class="shoutbox">
-    <div class="card">
-      <h2 style="color:var(--orange); margin-bottom:15px;">Live Shoutbox</h2>
-      <div class="shouts" id="shouts"></div>
-      <input type="text" id="shoutText" class="input" placeholder="Type message and press Enter..." onkeypress="if(event.key==='Enter') shout()">
-    </div>
-  </div>
+<div class="shoutbox">
+  <div class="shouts" id="shouts"></div>
+  <input type="text" id="shoutText" placeholder="Shout something to the crew..." onkeypress="if(event.key==='Enter') shout()" style="width:100%; padding:12px; background:#222; border:2px solid var(--orange); color:white; border-radius:50px;">
 </div>
 
+<div class="feed" id="feed"></div>
+
+<button class="new-post" onclick="document.getElementById('photoInput').click()">+</button>
+<input type="file" id="photoInput" accept="image/*" class="input-file" onchange="uploadPost(this.files[0])">
+
+<div id="loginScreen" style="position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;">
+  <h1 style="color:var(--orange);font-size:40px;">Inertia Logistics</h1>
+  <input type="email" id="email" placeholder="Email" style="padding:15px;width:300px;border-radius:50px;background:#222;border:none;color:white;">
+  <input type="password" id="password" placeholder="Password" style="padding:15px;width:300px;border-radius:50px;background:#222;border:none;color:white;">
+  <button onclick="login()" style="background:var(--orange);color:black;padding:15px 40px;border:none;border-radius:50px;font-weight:bold;">LOGIN</button>
+  <button onclick="signup()" style="background:#333;color:white;padding:15px 40px;border:none;border-radius:50px;">CREATE ACCOUNT</button>
 </div>
 
 <script>
-const firebaseConfig = {
+const firebaseConfig = { 
   apiKey: "AIzaSyAnfQTsgdSf6c4Wty6XbN4xdkSVp7d3KvM",
   authDomain: "inertia-logistics.firebaseapp.com",
   projectId: "inertia-logistics",
@@ -81,7 +68,6 @@ const firebaseConfig = {
   messagingSenderId: "478964604946",
   appId: "1:478964604946:web:8e9373cad36ceb88afb8cb"
 };
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -94,83 +80,96 @@ auth.onAuthStateChanged(async user => {
   if (user) {
     uid = user.uid;
     document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("app").classList.remove("hidden");
     const doc = await db.collection("users").doc(uid).get();
     inGameName = doc.exists && doc.data().inGameName ? doc.data().inGameName : "Driver";
-    loadTopics();
-    loadShouts();
-    updateOnline();
+    loadFeed(); loadShouts(); updateOnline();
     setInterval(updateOnline, 10000);
   }
 });
 
 function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
 function signup() { auth.createUserWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)
-  .then(()=>db.collection("users").doc(auth.currentUser.uid).set({inGameName:"Driver", joined:new Date()}))
+  .then(() => db.collection("users").doc(auth.currentUser.uid).set({inGameName:"Driver", joined:new Date()}))
   .catch(e=>alert(e.message)); }
+
+async function uploadPost(file) {
+  if (!file) return;
+  const text = prompt("Caption (optional):") || "";
+  const ref = storage.ref("posts/" + Date.now() + ".jpg");
+  await ref.put(file);
+  const url = await ref.getDownloadURL();
+  await db.collection("posts").add({
+    uid, name: inGameName, text, url, likes: [], time: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
 
 async function shout() {
   const text = document.getElementById("shoutText").value.trim();
   if (!text) return;
-  await db.collection("shouts").add({
-    text, name: inGameName, uid, time: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  await db.collection("shouts").add({name: inGameName, text, time: firebase.firestore.FieldValue.serverTimestamp()});
   document.getElementById("shoutText").value = "";
 }
 
 function loadShouts() {
-  db.collection("shouts").orderBy("time","desc").limit(50).onSnapshot(s => {
+  db.collection("shouts").orderBy("time","desc").limit(30).onSnapshot(s => {
     const div = document.getElementById("shouts");
     div.innerHTML = "";
     s.docs.reverse().forEach(d => {
       const m = d.data();
-      div.innerHTML += `<div class="shout"><span class="ingame">${m.name} 🚛:</span> ${m.text}</div>`;
+      div.innerHTML += `<div class="shout"><span>${m.name} 🚛:</span> ${m.text}</div>`;
     });
   });
 }
 
-function loadTopics() {
-  db.collection("topics").orderBy("lastPost","desc").onSnapshot(s => {
-    const div = document.getElementById("topicsList");
-    if (s.empty) { div.innerHTML = "<p>No topics yet. Create the first one!</p>"; return; }
-    div.innerHTML = "";
-    s.forEach(d => {
-      const t = d.data();
-      div.innerHTML += `
-        <div class="topic-item" onclick="openTopic('${d.id}')">
-          <div>
-            <strong style="color:var(--orange); font-size:18px;">${t.title}</strong><br>
-            <small>by ${t.author} • just now</small>
+function loadFeed() {
+  db.collection("posts").orderBy("time","desc").onSnapshot(s => {
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+    s.docs.forEach(d => {
+      const p = d.data();
+      const liked = p.likes.includes(uid);
+      feed.innerHTML += `
+        <div class="post">
+          <div class="post-header">
+            <div class="name">${p.name} 🚛</div>
           </div>
-          <div>→</div>
+          ${p.text ? `<div class="post-content">${p.text}</div>` : ""}
+          ${p.url ? `<img src="${p.url}" class="post-img">` : ""}
+          <div class="post-actions">
+            <span class="like-btn" onclick="like('${d.id}')">${liked ? "❤️" : "🤍"} ${p.likes.length}</span>
+          </div>
         </div>`;
     });
   });
 }
 
-function newTopic() {
-  const title = prompt("Topic title:");
-  if (!title) return;
-  const content = prompt("First post content:");
-  db.collection("topics").add({
-    title, author: inGameName, content, lastPost: firebase.firestore.FieldValue.serverTimestamp(), replies: 0
-  });
+async function like(id) {
+  const ref = db.collection("posts").doc(id);
+  const doc = await ref.get();
+  const likes = doc.data().likes || [];
+  if (likes.includes(uid)) likes.splice(likes.indexOf(uid),1);
+  else likes.push(uid);
+  await ref.update({likes});
 }
 
 function updateOnline() {
-  if (uid) db.collection("online").doc(uid).set({name: inGameName, time: Date.now()},{merge:true});
-  db.collection("online").onSnapshot(s => {
-    document.querySelector(".online-btn").innerHTML = `${s.size} Online`;
-  });
+  if (uid) db.collection("online").doc(uid).set({name:inGameName,time:Date.now()},{merge:true});
+  db.collection("online").onSnapshot(s => document.querySelector(".online").innerHTML = s.size + " Online");
 }
 
 function showOnline() {
   db.collection("online").get().then(s => {
-    let list = "🚛 ONLINE DRIVERS 🚛\n\n";
-    s.forEach(d => list += `• ${d.data().name}\n`);
+    let list = "ONLINE NOW\n\n";
+    s.forEach(d => list += "• " + d.data().name + "\n");
     alert(list || "Nobody online");
   });
 }
 </script>
 
-<center style="margin:50px; color:var(--orange); font-size:22px;">
+<center style="margin:100px 20px; color:var(--orange); font-size:24px;">
+  <b>PASTE THIS ENTIRE CODE NOW = FACEBOOK/INSTAGRAM STYLE FORUM</b><br><br>
+  <a href="https://github.com/obeddb70/inertia-logistics/edit/main/index.html" target="_blank" 
+     style="background:var(--orange); color:black; padding:20px 50px; text-decoration:none; border-radius:50px; font-weight:bold; font-size:28px;">
+    CLICK HERE TO REPLACE FILE
+  </a>
+</center>
