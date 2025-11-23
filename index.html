@@ -3,63 +3,490 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inertia Logistics</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<title>Inertia Logistics • Forum</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  :root { --bg:#0a0e17; --card:#12151f; --orange:#ff6b00; --green:#00ff80; }
-  * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,-apple-system,Arial; }
-  body { background:var(--bg); color:white; min-height:100vh; }
-  .header { position:fixed; top:0; left:0; right:0; background:#0a0e17; border-bottom:4px solid var(--orange); padding:15px; text-align:center; z-index:1000; display:flex; justify-content:center; align-items:center; }
-  .header h1 { color:var(--orange); font-size:32px; font-weight:900; text-shadow:0 0 20px #ff6b00; }
-  .online { position:fixed; top:18px; right:15px; background:var(--orange); color:black; padding:8px 20px; border-radius:50px; font-weight:bold; font-size:15px; cursor:pointer; }
-  .logout-btn { position:fixed; top:18px; left:15px; background:#333; color:white; padding:8px 16px; border-radius:50px; font-size:14px; cursor:pointer; }
-  .shoutbox { position:fixed; top:68px; left:0; right:0; background:#0f131c; border-bottom:3px solid var(--orange); padding:12px; z-index:999; }
-  .shouts { height:130px; overflow-y:auto; margin-bottom:10px; font-size:15px; padding:0 5px; }
-  .shout span { color:var(--green); font-weight:bold; }
-  .shout-input { width:100%; padding:14px 18px; background:#1a1f2e; border:2px solid var(--orange); color:white; border-radius:50px; font-size:16px; }
-  .feed { padding-top:230px; padding-bottom:80px; }
-  .post { background:var(--card); max-width:520px; margin:20px auto; border-radius:20px; overflow:hidden; box-shadow:0 8px 32px rgba(255,107,0,0.15); }
-  .post-header { padding:16px; display:flex; align-items:center; gap:12px; }
-  .name { color:var(--green); font-weight:700; font-size:17px; }
-  .post-img { width:100%; display:block; }
-  .post-text { padding:0 16px 12px; font-size:16px; }
-  .actions { padding:10px 16px; display:flex; gap:25px; font-size:22px; }
-  .like { cursor:pointer; }
-  .new-post-btn { position:fixed; bottom:25px; right:20px; background:var(--orange); color:black; width:64px; height:64px; border-radius:50%; font-size:36px; font-weight:bold; border:none; box-shadow:0 0 30px rgba(255,107,0,0.7); z-index:999; }
-  .hidden { display:none; }
-  .login-screen { position:fixed; top:0; left:0; right:0; bottom:0; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; z-index:10000; }
-  .login-screen input { width:300px; padding:16px; background:#1a1f2e; border:none; border-radius:50px; color:white; font-size:17px; }
-  .login-screen button { background:var(--orange); color:black; padding:16px 50px; border:none; border-radius:50px; font-weight:bold; font-size:18px; }
+  :root { 
+    --navy:#0a1d37; --orange:#ff6b00; --deep:#051028; 
+    --green:#27ae60; --purple:#9b59b6; --blue:#3498db;
+    --discord:#5865F2;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#051028; color:white; font-family:'Rajdhani',sans-serif; min-height:100vh; }
+  .hidden { display:none!important; }
+
+  /* LOGIN */
+  #loginScreen { 
+    min-height:100vh; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    padding:20px;
+    background: linear-gradient(135deg, var(--deep) 0%, var(--navy) 100%);
+  }
+  .login-box { 
+    background:rgba(10,29,55,0.97); 
+    padding:50px 30px; 
+    border-radius:24px; 
+    text-align:center;
+    max-width:420px; 
+    width:100%; 
+    border:3px solid var(--orange); 
+    box-shadow:0 0 60px rgba(255,107,0,0.6);
+    backdrop-filter: blur(10px);
+  }
+  .login-box h1 { 
+    font-family:'Orbitron',sans-serif; 
+    font-size:2.6rem; 
+    color:var(--orange);
+    text-shadow:0 0 20px var(--orange); 
+    margin-bottom:12px; 
+    letter-spacing:-1px; 
+  }
+  .login-subtitle {
+    color: #ccc;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+  }
+
+  input, textarea { 
+    width:100%; 
+    padding:16px; 
+    margin:12px 0; 
+    border-radius:12px; 
+    border:none;
+    background:rgba(255,255,255,0.12); 
+    color:white; 
+    font-size:1.1rem;
+    transition: all 0.3s ease;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    background:rgba(255,255,255,0.18);
+    box-shadow: 0 0 10px rgba(255,107,0,0.3);
+  }
+  .btn { 
+    display:block; 
+    width:100%; 
+    padding:16px; 
+    margin:12px 0; 
+    border-radius:50px;
+    background:var(--orange); 
+    color:white; 
+    border:none; 
+    cursor:pointer; 
+    font-weight:bold; 
+    font-size:1.2rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255,107,0,0.4);
+  }
+  .btn:active {
+    transform: translateY(0);
+  }
+  .btn-discord { background:var(--discord); }
+  .btn-green { background:var(--green); }
+  .btn-purple { background:var(--purple); }
+  .btn-blue { background:var(--blue); }
+
+  /* HEADER */
+  header { 
+    background:var(--deep); 
+    padding:15px 20px; 
+    display:flex; 
+    justify-content:space-between;
+    align-items:center; 
+    border-bottom:4px solid var(--orange); 
+    position:sticky; 
+    top:0; 
+    z-index:100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .logo { 
+    font-family:'Orbitron',sans-serif; 
+    font-size:1.9rem; 
+    color:var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo i {
+    font-size: 1.5rem;
+  }
+
+  /* MAIN CONTAINER */
+  .container { 
+    max-width:1400px; 
+    margin:20px auto; 
+    padding:0 15px; 
+    display:grid; 
+    grid-template-columns:1fr 360px; 
+    gap:25px; 
+  }
+  
+  /* CARDS */
+  .card { 
+    background:rgba(255,255,255,0.07); 
+    border-radius:16px; 
+    padding:25px; 
+    border:1px solid rgba(255,107,0,0.2);
+    backdrop-filter: blur(5px);
+  }
+  
+  /* TOPICS */
+  .topic { 
+    background:rgba(255,255,255,0.1); 
+    padding:18px; 
+    border-radius:12px; 
+    margin:15px 0;
+    border-left:5px solid var(--orange); 
+    display:flex; 
+    justify-content:space-between; 
+    align-items:center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .topic:hover {
+    background:rgba(255,255,255,0.15);
+    transform: translateX(5px);
+  }
+  .topic-title { 
+    font-size:1.4rem; 
+    font-weight:bold; 
+    color:var(--orange); 
+    margin-bottom: 5px;
+  }
+  .topic-meta { 
+    color:#aaa; 
+    font-size:0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topic-stats {
+    display: flex;
+    gap: 15px;
+    margin-top: 8px;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: #ccc;
+  }
+  
+  /* SHOUTBOX */
+  #shouts { 
+    height:65vh; 
+    overflow-y:auto;
+    padding-right: 10px;
+  }
+  #shouts::-webkit-scrollbar {
+    width: 6px;
+  }
+  #shouts::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+  }
+  #shouts::-webkit-scrollbar-thumb {
+    background: var(--orange);
+    border-radius: 10px;
+  }
+  .shout { 
+    padding:12px 0; 
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    animation: fadeIn 0.3s ease;
+  }
+  .shout strong { color:var(--orange); }
+  .shout-time {
+    font-size: 0.75rem;
+    color: #888;
+    margin-left: 8px;
+  }
+
+  /* USER BADGES */
+  .ingame-name { 
+    color:#ff6b00; 
+    font-weight:bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .user-badge {
+    background: var(--orange);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+  .admin-badge {
+    background: var(--purple);
+  }
+  .mod-badge {
+    background: var(--blue);
+  }
+
+  /* ONLINE USERS */
+  .online-users {
+    margin-top: 20px;
+  }
+  .online-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 5px 0;
+    background: rgba(255,255,255,0.05);
+  }
+  .online-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  /* MODALS */
+  .modal-overlay {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+    backdrop-filter: blur(5px);
+  }
+  .modal-content {
+    background:#0f3460;
+    padding:30px;
+    border-radius:20px;
+    width:90%;
+    max-width:500px;
+    border:2px solid var(--orange);
+    box-shadow: 0 0 40px rgba(255,107,0,0.4);
+    animation: modalSlideIn 0.3s ease;
+  }
+  
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width:900px) { 
+    .container { grid-template-columns:1fr; } 
+    .login-box h1 { font-size:2.3rem; }
+  }
+  @media (max-width:480px) {
+    .login-box { padding: 30px 20px; }
+    .topic { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .topic-stats { justify-content: space-between; width: 100%; }
+  }
+
+  /* TOPIC VIEW */
+  .topic-view { display: none; }
+  .post { 
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 3px solid var(--orange);
+  }
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #ccc;
+    font-size: 0.9rem;
+  }
+  .back-button {
+    background: var(--navy);
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>INERTIA LOGISTICS</h1>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1><i class="fas fa-truck-moving"></i> INERTIA LOGISTICS</h1>
+    <p class="login-subtitle">Drive with the Force. Choose Inertia.</p>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="pass" placeholder="Password">
+    <button class="btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <button class="btn btn-green" onclick="signup()"><i class="fas fa-user-plus"></i> Create Account</button>
+    <a href="https://convoytrucking.net/club/Inertia%20Logistics" target="_blank" class="btn btn-blue">
+      <i class="fas fa-clipboard-list"></i> Apply to Club
+    </a>
+    <a href="https://convoytrucking.net/club/Inertia%20Logistics/members" target="_blank" class="btn btn-green">
+      <i class="fas fa-users"></i> View Members
+    </a>
+    <a href="https://discord.gg/H5EAuVvRpD" target="_blank" class="btn btn-discord">
+      <i class="fab fa-discord"></i> Join Discord
+    </a>
+  </div>
 </div>
 
-<div class="online" onclick="showOnline()">0 Online</div>
-<div class="logout-btn hidden" id="logoutBtn" onclick="logout()">Logout</div>
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <header>
+    <div class="logo">
+      <i class="fas fa-truck-moving"></i> Inertia Logistics
+    </div>
+    <div>
+      <span id="userName" class="ingame-name"></span>
+      <button onclick="logout()" style="background:none;border:none;color:#ff6b00;cursor:pointer;margin-left:15px;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
 
-<div class="shoutbox">
-  <div class="shouts" id="shouts"></div>
-  <input type="text" class="shout-input" id="shoutInput" placeholder="Shout to the crew..." onkeypress="if(event.key==='Enter') shout()">
+  <div class="container">
+    <!-- FORUM SECTION -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h2 style="color:#ff6b00;"><i class="fas fa-comments"></i> Forum Topics</h2>
+        <button class="btn" onclick="showNewTopic()" style="padding:12px 24px;font-size:1rem;">
+          <i class="fas fa-plus"></i> New Topic
+        </button>
+      </div>
+      <div id="topics"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="card">
+      <h3 style="color:#ff6b00;"><i class="fas fa-bullhorn"></i> Live Shoutbox</h3>
+      <div id="shouts"></div>
+      <div style="margin-top:15px;display:flex;gap:10px;">
+        <input type="text" id="shoutInput" placeholder="Say something..." maxlength="160">
+        <button onclick="sendShout()" class="btn" style="padding:12px 20px;">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      
+      <div class="online-users">
+        <h4 style="color:#ff6b00;margin-top:20px;"><i class="fas fa-circle"></i> Online Now</h4>
+        <div id="onlineUsersList"></div>
+      </div>
+      
+      <div style="margin-top:25px;">
+        <button onclick="showInGameNameModal()" class="btn btn-purple" style="width:100%;">
+          <i class="fas fa-gamepad"></i> Set In-Game Name
+        </button>
+        <a href="https://convoytrucking.net/club/Inertia%20Logistics/members" target="_blank"
+           class="btn btn-green" style="display:block;margin-top:10px;text-decoration:none;">
+           <i class="fas fa-users"></i> View Member List
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="feed" id="feed"></div>
-<button class="new-post-btn" onclick="document.getElementById('fileInput').click()">+</button>
-<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="uploadPost(this.files[0])">
-
-<div id="loginScreen" class="login-screen">
-  <h1 style="color:var(--orange);font-size:42px;">Inertia Logistics</h1>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">LOGIN</button>
-  <button onclick="signup()" style="background:#333;">CREATE ACCOUNT</button>
+<!-- TOPIC VIEW (Hidden by default) -->
+<div id="topicView" class="hidden">
+  <header>
+    <div style="display:flex;align-items:center;gap:15px;">
+      <button class="back-button" onclick="showForum()">
+        <i class="fas fa-arrow-left"></i> Back to Forum
+      </button>
+      <div class="logo">
+        <i class="fas fa-truck-moving"></i> Inertia Logistics
+      </div>
+    </div>
+    <div>
+      <span id="userNameTopic" class="ingame-name"></span>
+      <button onclick="logout()" style="background:none;border:none;color:#ff6b00;cursor:pointer;margin-left:15px;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <div id="topicContent"></div>
+      <div style="margin-top:20px;">
+        <h3 style="color:#ff6b00;margin-bottom:15px;"><i class="fas fa-reply"></i> Replies</h3>
+        <div id="replies"></div>
+        <div style="margin-top:20px;">
+          <textarea id="replyText" placeholder="Write your reply..." rows="3"></textarea>
+          <button class="btn" onclick="addReply()" style="margin-top:10px;">
+            <i class="fas fa-paper-plane"></i> Post Reply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- MODALS -->
+<div id="ingameModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h2 style="color:#ff6b00;margin-bottom:20px;">
+      <i class="fas fa-gamepad"></i> Set Your In-Game Name
+    </h2>
+    <input type="text" id="ingameInput" placeholder="e.g. IceBlaze" style="text-align:center;font-size:1.2rem;">
+    <div style="text-align:center;margin-top:20px;">
+      <button onclick="hideInGameNameModal()" style="background:#666;padding:12px 20px;border-radius:50px;margin-right:10px;">
+        Cancel
+      </button>
+      <button onclick="saveInGameName()" class="btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="newTopicModal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h2 style="color:#ff6b00;margin-bottom:20px;">
+      <i class="fas fa-plus"></i> Create New Topic
+    </h2>
+    <input type="text" id="topicTitle" placeholder="Topic Title">
+    <textarea id="topicBody" placeholder="Write your post..." rows="6"></textarea>
+    <div style="text-align:right;margin-top:20px;">
+      <button onclick="hideNewTopic()" style="background:#666;padding:12px 20px;border-radius:50px;margin-right:10px;">
+        Cancel
+      </button>
+      <button onclick="createTopic()" class="btn">Post Topic</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -73,155 +500,377 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
 
+let ingameName = "";
 let currentUser = null;
-let inGameName = "Driver";
+let currentTopicId = null;
 
+// Enhanced authentication with session tracking
 auth.onAuthStateChanged(async user => {
   if (user) {
     currentUser = user;
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("logoutBtn").classList.remove("hidden");
+    const userDoc = await db.collection("users").doc(user.uid).get();
     
-    const doc = await db.collection("users").doc(user.uid).get();
-    if (doc.exists && doc.data().inGameName) {
-      inGameName = doc.data().inGameName;
+    if (userDoc.exists) {
+      ingameName = userDoc.data().ingame || user.email.split("@")[0];
+      // Update last active time
+      await db.collection("users").doc(user.uid).update({
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
     } else {
-      await db.collection("users").doc(user.uid).set({ inGameName: "Driver", joined: new Date() });
+      // Create user document if it doesn't exist
+      ingameName = user.email.split("@")[0];
+      await db.collection("users").doc(user.uid).set({
+        email: user.email,
+        ingame: ingameName,
+        joined: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
-
-    loadFeed();
+    
+    document.getElementById("userName").textContent = ingameName;
+    document.getElementById("userNameTopic").textContent = ingameName;
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    
+    loadTopics();
     loadShouts();
-    keepOnline();
-    setInterval(keepOnline, 10000);
+    loadOnlineUsers();
+    
+    // Set up real-time updates
+    setInterval(() => {
+      if (currentUser) {
+        db.collection("users").doc(currentUser.uid).update({
+          lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    }, 30000); // Update every 30 seconds
+    
   } else {
-    currentUser = null;
     document.getElementById("loginScreen").classList.remove("hidden");
-    document.getElementById("logoutBtn").classList.add("hidden");
-    document.getElementById("feed").innerHTML = "";
-    document.getElementById("shouts").innerHTML = "";
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("topicView").classList.add("hidden");
   }
 });
 
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.signInWithEmailAndPassword(email, password).catch(e => alert(e.message));
-}
+// Authentication functions
+window.login = () => { 
+  const e = document.getElementById("email").value.trim(); 
+  const p = document.getElementById("pass").value; 
+  if(!e||!p) return alert("Please fill in both fields"); 
+  auth.signInWithEmailAndPassword(e,p).catch(err=>alert(err.message)); 
+};
 
-function signup() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      db.collection("users").doc(auth.currentUser.uid).set({ inGameName: "Driver", joined: new Date() });
-    })
-    .catch(e => alert(e.message));
-}
+window.signup = () => { 
+  const e = document.getElementById("email").value.trim(); 
+  const p = document.getElementById("pass").value; 
+  if(!e||!p) return alert("Please fill in both fields"); 
+  if(p.length<6) return alert("Password must be at least 6 characters"); 
+  auth.createUserWithEmailAndPassword(e,p)
+    .then(()=>alert("Account created successfully!"))
+    .catch(err=>alert(err.message)); 
+};
 
-function logout() {
-  auth.signOut();
-}
+window.logout = () => auth.signOut();
 
-async function uploadPost(file) {
-  if (!file || !currentUser) return;
-  const caption = prompt("Caption (optional):") || "";
-  const ref = storage.ref("posts/" + Date.now() + ".jpg");
-  await ref.put(file);
-  const url = await ref.getDownloadURL();
-  await db.collection("posts").add({
-    uid: currentUser.uid,
-    name: inGameName,
-    caption,
-    url,
-    likes: [],
+// In-Game Name Management
+window.showInGameNameModal = () => document.getElementById("ingameModal").classList.remove("hidden");
+window.hideInGameNameModal = () => document.getElementById("ingameModal").classList.add("hidden");
+window.saveInGameName = () => {
+  const name = document.getElementById("ingameInput").value.trim();
+  if (!name) return alert("Enter your in-game name");
+  db.collection("users").doc(auth.currentUser.uid).set({ 
+    ingame: name 
+  }, { merge: true }).then(() => {
+    ingameName = name;
+    document.getElementById("userName").textContent = name;
+    document.getElementById("userNameTopic").textContent = name;
+    hideInGameNameModal();
+  });
+};
+
+// Enhanced Topic System
+window.createTopic = () => {
+  const title = document.getElementById("topicTitle").value.trim();
+  const body = document.getElementById("topicBody").value.trim();
+  if (!title || !body) return alert("Please fill in both title and body");
+  
+  db.collection("topics").add({
+    title, 
+    body, 
+    author: ingameName,
+    authorId: auth.currentUser.uid,
+    replies: 0,
+    views: 0,
+    lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
     time: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    hideNewTopic();
+    showNotification('Topic created successfully!');
   });
-}
+};
 
-async function shout() {
-  const text = document.getElementById("shoutInput").value.trim();
-  if (!text || !currentUser) return;
-  await db.collection("shouts").add({
-    name: inGameName,
-    text,
-    time: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  document.getElementById("shoutInput").value = "";
-}
+window.showNewTopic = () => document.getElementById("newTopicModal").classList.remove("hidden");
+window.hideNewTopic = () => { 
+  document.getElementById("newTopicModal").classList.add("hidden"); 
+  document.getElementById("topicTitle").value = ""; 
+  document.getElementById("topicBody").value = ""; 
+};
 
-function loadShouts() {
-  db.collection("shouts").orderBy("time","desc").limit(40).onSnapshot(snap => {
-    const div = document.getElementById("shouts");
-    div.innerHTML = "";
-    snap.docs.reverse().forEach(doc => {
-      const d = doc.data();
-      div.innerHTML += `<div class="shout"><span>${d.name} Truck:</span> ${d.text}</div>`;
-    });
-  });
-}
-
-function loadFeed() {
-  db.collection("posts").orderBy("time","desc").onSnapshot(snap => {
-    const feed = document.getElementById("feed");
-    feed.innerHTML = "";
+function loadTopics() {
+  db.collection("topics").orderBy("lastActivity","desc").onSnapshot(snap => {
+    const topicsContainer = document.getElementById("topics");
+    topicsContainer.innerHTML = "";
+    
     snap.forEach(doc => {
-      const p = doc.data();
-      const liked = p.likes && p.likes.includes(currentUser?.uid);
-      feed.innerHTML += `
-        <div class="post">
-          <div class="post-header">
-            <div class="name">${p.name} Truck</div>
+      const t = doc.data();
+      const timeAgo = getTimeAgo(t.time);
+      
+      const div = document.createElement("div"); 
+      div.className = "topic";
+      div.onclick = () => openTopic(doc.id, t);
+      
+      div.innerHTML = `
+        <div style="flex:1;">
+          <div class="topic-title">${t.title}</div>
+          <div class="topic-meta">
+            <span>by ${t.author}</span>
+            <span>•</span>
+            <span>${timeAgo}</span>
           </div>
-          ${p.caption ? `<div class="post-text">${p.caption}</div>` : ""}
-          ${p.url ? `<img src="${p.url}" class="post-img">` : ""}
-          <div class="actions">
-            <span class="like" onclick="toggleLike('${doc.id}')">${liked ? 'Full Heart' : 'Empty Heart'} ${p.likes ? p.likes.length : 0}</span>
+          <div class="topic-stats">
+            <div class="stat">
+              <i class="fas fa-reply"></i> ${t.replies || 0} replies
+            </div>
+            <div class="stat">
+              <i class="fas fa-eye"></i> ${t.views || 0} views
+            </div>
           </div>
-        </div>`;
+        </div>
+        <div style="color:var(--orange); font-size:1.5rem;">→</div>
+      `;
+      topicsContainer.appendChild(div);
     });
+    
+    if (snap.empty) {
+      topicsContainer.innerHTML = `
+        <div style="text-align:center; padding:40px; color:#ccc;">
+          <i class="fas fa-comments" style="font-size:3rem; margin-bottom:15px; opacity:0.5;"></i>
+          <p>No topics yet. Be the first to start a discussion!</p>
+        </div>
+      `;
+    }
   });
 }
 
-async function toggleLike(id) {
-  if (!currentUser) return;
-  const ref = db.collection("posts").doc(id);
-  const doc = await ref.get();
-  const likes = doc.data().likes || [];
-  if (likes.includes(currentUser.uid)) {
-    likes.splice(likes.indexOf(currentUser.uid), 1);
-  } else {
-    likes.push(currentUser.uid);
-  }
-  await ref.update({ likes });
+function openTopic(topicId, topicData) {
+  // Update view count
+  db.collection("topics").doc(topicId).update({
+    views: (topicData.views || 0) + 1
+  });
+  
+  currentTopicId = topicId;
+  
+  // Load topic content
+  document.getElementById("topicContent").innerHTML = `
+    <div class="post">
+      <div class="post-header">
+        <span><strong>${topicData.author}</strong></span>
+        <span>${getTimeAgo(topicData.time)}</span>
+      </div>
+      <h2 style="color:var(--orange); margin:15px 0;">${topicData.title}</h2>
+      <div style="line-height:1.6; white-space: pre-wrap;">${topicData.body}</div>
+    </div>
+  `;
+  
+  // Load replies
+  loadReplies(topicId);
+  
+  // Show topic view
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("topicView").classList.remove("hidden");
 }
 
-function keepOnline() {
-  if (currentUser) {
-    db.collection("online").doc(currentUser.uid).set({
-      name: inGameName,
-      time: Date.now()
-    }, { merge: true });
-  }
+function loadReplies(topicId) {
+  db.collection("replies")
+    .where("topicId", "==", topicId)
+    .orderBy("time", "asc")
+    .onSnapshot(snap => {
+      const repliesContainer = document.getElementById("replies");
+      repliesContainer.innerHTML = "";
+      
+      if (snap.empty) {
+        repliesContainer.innerHTML = `
+          <div style="text-align:center; padding:20px; color:#ccc;">
+            <p>No replies yet. Be the first to respond!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      snap.forEach(doc => {
+        const r = doc.data();
+        const replyDiv = document.createElement("div");
+        replyDiv.className = "post";
+        replyDiv.innerHTML = `
+          <div class="post-header">
+            <span><strong>${r.author}</strong></span>
+            <span>${getTimeAgo(r.time)}</span>
+          </div>
+          <div style="line-height:1.6; white-space: pre-wrap;">${r.body}</div>
+        `;
+        repliesContainer.appendChild(replyDiv);
+      });
+    });
 }
-db.collection("online").onSnapshot(snap => {
-  document.querySelector(".online").textContent = snap.size + " Online";
+
+function addReply() {
+  const replyText = document.getElementById("replyText").value.trim();
+  if (!replyText) return alert("Please write a reply");
+  
+  db.collection("replies").add({
+    topicId: currentTopicId,
+    body: replyText,
+    author: ingameName,
+    authorId: auth.currentUser.uid,
+    time: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(() => {
+    // Update topic's last activity and reply count
+    db.collection("topics").doc(currentTopicId).update({
+      lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+      replies: firebase.firestore.FieldValue.increment(1)
+    });
+    
+    document.getElementById("replyText").value = "";
+    showNotification('Reply posted!');
+  });
+}
+
+function showForum() {
+  document.getElementById("topicView").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+}
+
+// Enhanced Shoutbox
+window.sendShout = () => {
+  const msg = document.getElementById("shoutInput").value.trim();
+  if (msg) {
+    db.collection("shouts").add({ 
+      user: ingameName, 
+      userId: auth.currentUser.uid,
+      msg, 
+      time: firebase.firestore.FieldValue.serverTimestamp() 
+    });
+    document.getElementById("shoutInput").value = "";
+  }
+};
+
+db.collection("shouts").orderBy("time","desc").limit(50).onSnapshot(snap => {
+  const shoutsContainer = document.getElementById("shouts");
+  shoutsContainer.innerHTML = "";
+  
+  snap.docs.reverse().forEach(doc => {
+    const s = doc.data();
+    const timeAgo = getTimeAgo(s.time);
+    
+    const d = document.createElement("div"); 
+    d.className = "shout";
+    d.innerHTML = `
+      <strong>${s.user}:</strong> ${s.msg}
+      <span class="shout-time">${timeAgo}</span>
+    `;
+    shoutsContainer.appendChild(d);
+  });
+  
+  shoutsContainer.scrollTop = shoutsContainer.scrollHeight;
 });
 
-function showOnline() {
-  db.collection("online").get().then(snap => {
-    let list = "ONLINE DRIVERS\n\n";
-    snap.forEach(d => list += "Truck " + d.data().name + "\n");
-    alert(list || "Nobody online");
-  });
+// Online Users Tracking
+function loadOnlineUsers() {
+  const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+  
+  db.collection("users")
+    .where("lastActive", ">", fiveMinutesAgo)
+    .onSnapshot(snap => {
+      const onlineList = document.getElementById("onlineUsersList");
+      onlineList.innerHTML = "";
+      
+      snap.forEach(doc => {
+        const user = doc.data();
+        const userDiv = document.createElement("div");
+        userDiv.className = "online-user";
+        userDiv.innerHTML = `
+          <div class="online-dot"></div>
+          <span>${user.ingame || user.email.split('@')[0]}</span>
+        `;
+        onlineList.appendChild(userDiv);
+      });
+      
+      if (snap.empty) {
+        onlineList.innerHTML = '<div style="color:#888; text-align:center; padding:10px;">No one online</div>';
+      }
+    });
 }
-</script>
 
-<center style="margin:100px 20px; color:var(--orange); font-size:26px;">
-  <b>THIS IS THE FINAL ONE — LOGIN/LOGOUT FIXED 100%</b><br><br>
-  <a href="https://github.com/obeddb70/inertia-logistics/edit/main/index.html" target="_blank"
-     style="background:var(--orange);color:black;padding:20px 60px;border-radius:50px;font-size:30px;text-decoration:none;font-weight:bold;">
-    REPLACE FILE NOW
-  </a>
-</center>
+// Utility Functions
+function getTimeAgo(timestamp) {
+  if (!timestamp) return "just now";
+  
+  const now = new Date();
+  const time = timestamp.toDate();
+  const diff = now - time;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (days > 0) return `${days}d ago`;
+  if (hours > 0) return `${hours}h ago`;
+  if (minutes > 0) return `${minutes}m ago`;
+  return "just now";
+}
+
+function showNotification(message) {
+  // Create a simple notification
+  const notification = document.createElement("div");
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--orange);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  `;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// Enter key support
+document.addEventListener('DOMContentLoaded', function() {
+  const shoutInput = document.getElementById("shoutInput");
+  if (shoutInput) {
+    shoutInput.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendShout();
+      }
+    });
+  }
+  
+  const replyText = document.getElementById("replyText");
+  if (replyText) {
+    replyText.addEventListener("keypress", function(e) {
+      if (e.ctrlKey && e.key === "Enter") {
+        addReply();
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
