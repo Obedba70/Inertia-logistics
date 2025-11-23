@@ -3,27 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inertia Logistics • Forum</title>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js">script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js">script>
+<title>Inertia Logistics • Official Club Forum</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <style>
-  :root { --navy:#0a1d37; --orange:#ff6b00; --dark:#051028; }
-  * { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
-  body { background:var(--dark); color:#ddd; }
+  :root { --bg: #0a0e1a; --card: #11131a; --orange: #ff6b00; --green: #00ff80; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Arial; }
+  body { background:var(--bg); color:#ccc; }
   .container { max-width:1100px; margin:0 auto; padding:15px; }
-  header { background:var(--navy); padding:30px; text-align:center; border-bottom:6px solid var(--orange); }
-  header h1 { color:var(--orange); font-size:38px; text-shadow:0 0 20px #ff6b00; }
-  .btn { background:var(--orange); color:black; padding:15px 40px; border:none; border-radius:12px; font-size:18px; font-weight:bold; cursor:pointer; margin:10px; }
+  header { background:#0d1117; padding:20px; text-align:center; border-bottom:5px solid var(--orange); }
+  header h1 { color:var(--orange); font-size:42px; text-shadow:0 0 20px #ff6b00; letter-spacing:2px; }
+  .btn { background:var(--orange); color:black; padding:12px 30px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; font-size:16px; }
   .btn:hover { background:#ff8533; }
+  .card { background:var(--card); border-radius:15px; padding:20px; margin:15px 0; border-left:4px solid var(--orange); }
+  .shoutbox .card { border-left:none; border:2px solid var(--orange); }
+  .shouts { height:400px; overflow-y:auto; background:#080a0f; padding:15px; border-radius:10px; }
+  .shout { margin:10px 0; }
+  .shout span { color:var(--green); font-weight:bold; }
+  .input { width:100%; padding:14px; background:#1a1f2e; border:2px solid #333; color:white; border-radius:10px; margin-top:10px; }
+  .topic-item { background:#161a26; padding:15px; margin:10px 0; border-radius:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .topic-item:hover { background:#1f2536; }
+  .ingame { color:var(--green); font-weight:bold; }
+  .online-btn { position:fixed; top:15px; right:15px; background:var(--orange); color:black; padding:10px 20px; border-radius:30px; font-weight:bold; z-index:999; cursor:pointer; }
   .hidden { display:none; }
-  .shoutbox { background:#111; border:3px solid var(--orange); padding:15px; border-radius:12px; margin:20px 0; }
-  .shouts { height:380px; overflow-y:auto; background:#000; padding:12px; border-radius:8px; }
-  .ingame { color:#00ff80; font-weight:bold; }
-  .menu a { display:block; padding:16px; color:#ff6b00; text-decoration:none; border-bottom:1px solid #333; font-size:17px; }
-  .menu a:hover { background:#222; }
-  .online { position:fixed; top:15px; right:15px; background:var(--orange); color:black; padding:10px 20px; border-radius:30px; font-weight:bold; cursor:pointer; }
+  .photo { max-width:100%; border-radius:10px; margin:10px 0; }
 </style>
 </head>
 <body>
@@ -31,50 +36,41 @@
 <div class="container">
 
 <header>
-  <h1>INERTIA LOGISTICSh1>
-  <p>Drive with the Force. Choose Inertia.p>
-header>
+  <h1>INERTIA LOGISTICS</h1>
+  <p style="color:#666; margin-top:5px;">Drive with the Force. Choose Inertia.</p>
+</header>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="loginScreen">
   <div style="text-align:center; padding:100px 20px;">
-    <h2 style="color:var(--orange); margin-bottom:30px;">Welcome to the Club Forumh2>
-    <input type="email" id="email" placeholder="Email" style="width:300px; padding:15px; margin:10px; background:#222; border:1px solid #555; color:white; border-radius:8px;"><br>
-    <input type="password" id="password" placeholder="Password" style="width:300px; padding:15px; margin:10px; background:#222; border:1px solid #555; color:white; border-radius:8px;"><br><br>
-    <button class="btn" onclick="login()">Loginbutton>
-    <button class="btn" onclick="signup()">Create Accountbutton>
-  div>
-div>
+    <h2 style="color:var(--orange); font-size:36px; margin-bottom:30px;">Official Club Forum</h2>
+    <input type="email" id="email" placeholder="Email" class="input" style="width:320px; display:inline-block;"><br><br>
+    <input type="password" id="password" placeholder="Password" class="input" style="width:320px; display:inline-block;"><br><br><br>
+    <button class="btn" onclick="login()">LOGIN</button>
+    <button class="btn" onclick="signup()">CREATE ACCOUNT</button>
+  </div>
+</div>
 
 <!-- MAIN APP -->
 <div id="app" class="hidden">
-  <div class="online" onclick="showOnline()">0 Online<div>
+  <div class="online-btn" onclick="showOnline()">0 Online</div>
+
+  <div class="card">
+    <h2 style="color:var(--orange); margin-bottom:15px;">Forum Topics</h2>
+    <button class="btn" onclick="newTopic()">+ New Topic</button>
+    <div id="topicsList" style="margin-top:20px;">Loading topics...</div>
+  </div>
 
   <div class="shoutbox">
-    <strong style="color:var(--orange)">Shoutboxstrong>
-    <div class="shouts" id="shouts">div>
-    <input type="text" id="shoutText" placeholder="Say something..." onkeypress="if(event.key==='Enter') shout()" style="width:100%; padding:12px; background:#222; border:2px solid var(--orange); color:white; border-radius:8px; margin-top:10px;">
-  div>
+    <div class="card">
+      <h2 style="color:var(--orange); margin-bottom:15px;">Live Shoutbox</h2>
+      <div class="shouts" id="shouts"></div>
+      <input type="text" id="shoutText" class="input" placeholder="Type message and press Enter..." onkeypress="if(event.key==='Enter') shout()">
+    </div>
+  </div>
+</div>
 
-  <div style="display:flex; gap:20px; flex-wrap:wrap;">
-    <div style="flex:1; min-width:250px;">
-      <div class="menu" style="background:#111; border-radius:12px;">
-        <a onclick="showSection('home')">Homea>
-        <a onclick="showSection('topics')">Forum Topicsa>
-        <a onclick="showSection('members')">View Membersa>
-        <a onclick="showSection('events')">Eventsa>
-        <a onclick="showSection('messages')">Messages (<span id="unreadCount">0span>)a>
-        <a onclick="showSection('profile')">My Profilea>
-        <a onclick="auth.signOut().then(()=>location.reload())">Logouta>
-      div>
-    div>
-
-    <div style="flex:3;" id="mainContent">
-      <h2 style="color:var(--orange)">Welcome back, <span id="userName" class="ingame">Driver</span>!h2>
-      <p>Go to My Profile → set your in-game name (it will appear in green everywhere).p>
-    div>
-  div>
-div>
+</div>
 
 <script>
 const firebaseConfig = {
@@ -94,93 +90,87 @@ const storage = firebase.storage();
 let uid = null;
 let inGameName = "Driver";
 
-// Auth
 auth.onAuthStateChanged(async user => {
   if (user) {
     uid = user.uid;
     document.getElementById("loginScreen").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
     const doc = await db.collection("users").doc(uid).get();
-    if (doc.exists) inGameName = doc.data().inGameName || user.email.split("@")[0];
-    document.getElementById("userName").textContent = inGameName;
-    loadShouts(); loadOnline(); checkUnread();
-    setInterval(()=>db.collection("online").doc(uid).set({name:inGameName,time:Date.now()},{merge:true}), 10000);
-  } else {
-    document.getElementById("app").classList.add("hidden");
-    document.getElementById("loginScreen").classList.remove("hidden");
+    inGameName = doc.exists && doc.data().inGameName ? doc.data().inGameName : "Driver";
+    loadTopics();
+    loadShouts();
+    updateOnline();
+    setInterval(updateOnline, 10000);
   }
 });
 
 function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
 function signup() { auth.createUserWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)
-  .then(()=>db.collection("users").doc(auth.currentUser.uid).set({inGameName:"",joined:new Date()}))
+  .then(()=>db.collection("users").doc(auth.currentUser.uid).set({inGameName:"Driver", joined:new Date()}))
   .catch(e=>alert(e.message)); }
 
 async function shout() {
-  let text = document.getElementById("shoutText").value.trim();
-  if(!text) return;
-  await db.collection("shouts").add({text, name:inGameName, uid, time: firebase.firestore.FieldValue.serverTimestamp()});
+  const text = document.getElementById("shoutText").value.trim();
+  if (!text) return;
+  await db.collection("shouts").add({
+    text, name: inGameName, uid, time: firebase.firestore.FieldValue.serverTimestamp()
+  });
   document.getElementById("shoutText").value = "";
 }
 
 function loadShouts() {
-  db.collection("shouts").orderBy("time","desc").limit(80).onSnapshot(s=>{
+  db.collection("shouts").orderBy("time","desc").limit(50).onSnapshot(s => {
     const div = document.getElementById("shouts");
     div.innerHTML = "";
-    s.docs.reverse().forEach(d=>{
-      let m = d.data();
-      div.innerHTML += `<div><span class="ingame">${m.name}:</span> ${m.text}div>`;
+    s.docs.reverse().forEach(d => {
+      const m = d.data();
+      div.innerHTML += `<div class="shout"><span class="ingame">${m.name} 🚛:</span> ${m.text}</div>`;
     });
   });
 }
 
-function showSection(sec) {
-  let html = {
-    home: `<h2 style="color:var(--orange)">Welcome back, <span class="ingame">${inGameName}</span>!h2><p>This is your club forum.p>`,
-    topics: `<h2 style="color:var(--orange)">Forum Topicsh2><button class="btn" onclick="newTopic()">+ New Topicbutton><div id="topicList">Loading...div>`,
-    members: `<h2 style="color:var(--orange)">Club Membersh2><div id="memberList">Loading...div>`,
-    events: `<h2 style="color:var(--orange)">Upcoming Eventsh2><p>No events yet — create one in Forum Topics!p>`,
-    messages: `<h2 style="color:var(--orange)">Private Messagesh2><div id="pmList">Loading...div>`,
-    profile: `<h2 style="color:var(--orange)">My Profileh2>
-              <p><strong>In-game name:strong><br>
-              <input type="text" id="ignInput" value="${inGameName}" style="padding:10px;width:250px;background:#222;color:white;border:1px solid #555;border-radius:8px;">
-              <button class="btn" onclick="saveIGN()">Save Namebutton></p>`
-  }[sec] || "<h2>Coming soon</h2>";
-  document.getElementById("mainContent").innerHTML = html;
-  if(sec==="topics") loadTopics();
-  if(sec==="members") loadMembers();
-  if(sec==="messages") loadPMs();
+function loadTopics() {
+  db.collection("topics").orderBy("lastPost","desc").onSnapshot(s => {
+    const div = document.getElementById("topicsList");
+    if (s.empty) { div.innerHTML = "<p>No topics yet. Create the first one!</p>"; return; }
+    div.innerHTML = "";
+    s.forEach(d => {
+      const t = d.data();
+      div.innerHTML += `
+        <div class="topic-item" onclick="openTopic('${d.id}')">
+          <div>
+            <strong style="color:var(--orange); font-size:18px;">${t.title}</strong><br>
+            <small>by ${t.author} • just now</small>
+          </div>
+          <div>→</div>
+        </div>`;
+    });
+  });
 }
 
-async function saveIGN() {
-  let newName = document.getElementById("ignInput").value.trim() || "Driver";
-  await db.collection("users").doc(uid).update({inGameName: newName});
-  inGameName = newName;
-  document.getElementById("userName").textContent = newName;
-  alert("In-game name saved! Refresh to see it in green.");
+function newTopic() {
+  const title = prompt("Topic title:");
+  if (!title) return;
+  const content = prompt("First post content:");
+  db.collection("topics").add({
+    title, author: inGameName, content, lastPost: firebase.firestore.FieldValue.serverTimestamp(), replies: 0
+  });
 }
 
-function loadOnline() {
-  db.collection("online").onSnapshot(s=> {
-    document.querySelector(".online").innerHTML = `${s.size} Online`;
+function updateOnline() {
+  if (uid) db.collection("online").doc(uid).set({name: inGameName, time: Date.now()},{merge:true});
+  db.collection("online").onSnapshot(s => {
+    document.querySelector(".online-btn").innerHTML = `${s.size} Online`;
   });
 }
 
 function showOnline() {
-  db.collection("online").get().then(s=>{
-    let list = "ONLINE DRIVERS\n\n";
-    s.forEach(d=> list += "• " + d.data().name + "\n");
-    alert(list||"Nobody online");
+  db.collection("online").get().then(s => {
+    let list = "🚛 ONLINE DRIVERS 🚛\n\n";
+    s.forEach(d => list += `• ${d.data().name}\n`);
+    alert(list || "Nobody online");
   });
 }
-
-function checkUnread() {
-  db.collection("pms").where("to", "==", uid).where("read", "==", false).onSnapshot(s=>{
-    document.getElementById("unreadCount").textContent = s.size;
-  });
-}
-
-// More functions (topics, photos, PMs) are fully coded and working when you paste this file
-// This version is tested and runs perfectly
-
 </script>
+
+<center style="margin:50px; color:var(--orange); font-size:22px;">
